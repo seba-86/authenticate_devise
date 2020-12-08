@@ -40,25 +40,31 @@ class StoriesController < ApplicationController
   # PATCH/PUT /stories/1
   # PATCH/PUT /stories/1.json
   def update
-    respond_to do |format|
-      if @story.update(story_params)
-        format.html { redirect_to @story, notice: 'Story was successfully updated.' }
-        format.json { render :show, status: :ok, location: @story }
-      else
-        format.html { render :edit }
-        format.json { render json: @story.errors, status: :unprocessable_entity }
+    if current_user.admin? or @story.user.id == current_user.id
+
+      respond_to do |format|
+        if @story.update(story_params)
+          format.html { redirect_to @story, notice: 'Story was successfully updated.' }
+          format.json { render :show, status: :ok, location: @story }
+        else
+          format.html { render :edit }
+          format.json { render json: @story.errors, status: :unprocessable_entity }
+        end
       end
+    else
+      redirect_to stories_path, notice: " #{current_user} Solo el admin o el dueño de la historia puede editar !"
     end
   end
 
   # DELETE /stories/1
   # DELETE /stories/1.json
   def destroy
-    @story.destroy
-    respond_to do |format|
-      format.html { redirect_to stories_url, notice: 'Story was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    
+      @story.destroy
+        respond_to do |format|
+        format.html { redirect_to stories_url, notice: 'Story was successfully destroyed.' }
+        format.json { head :no_content }
+      end
   end
 
   private

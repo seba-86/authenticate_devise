@@ -4,4 +4,5 @@ class Story < ApplicationRecord
     def name_user
         user.name
     end
+    
 end
